@@ -11,6 +11,15 @@ Current Status
 This project was imported as an abandonded orphan from [Google Code](https://code.google.com/p/nvt4j/)
 and given a new home here on Github on 17-Nov-2015.
 
+NVT4J did not work well with Windows Telnet and Putty. It has been suggested to replace it with telnetd [1].
+However, this issue has been fixed in this git repository to give it a
+new life.
+
+I have found NVT4J easier to integrate with custom shells than telnetd, and have successfully integrated
+it with JLINE on Android to provide an interactive shell for Android frameworks.
+
+[1] https://issues.apache.org/jira/browse/GSHELL-28
+
 Usage
 -----
 
@@ -44,7 +53,7 @@ a native program which manipulates the terminal driver in the operating system.
 Downloads
 ---------
 
-See [Downloads](https://github.com/archiecobbs/nvt4j/wiki/Downloads).
+See [Downloads](https://github.com/dankex/nvt4j/wiki/Downloads).
 
 Documentation
 -------------
@@ -57,5 +66,7 @@ License
 See the [LICENSE](https://github.com/archiecobbs/nvt4j/blob/master/LICENSE) file.
 
 Copyright 2006 Guglielmo Lichtner
+
 Copyright 2015 Archie L. Cobbs
 
+Copyright 2016 Danke Xie
