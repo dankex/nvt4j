@@ -21,6 +21,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.net.Socket;
+
 import nvt4j.impl.telnet.DefaultOptionHandler;
 import nvt4j.impl.telnet.FunctionCommand;
 import nvt4j.impl.telnet.OptionCommand;
@@ -113,24 +114,70 @@ public class Terminal implements nvt4j.Terminal {
         for (int i = 0; i < tmp.length; i++) {
             optionHandlers[tmp[i].getOption().getCode()] = tmp[i];
         }
-        init();
+        initFixed();
     }
 
     private void init() throws IOException {
+        // Send out options
         OptionStartThread optionStarter = new OptionStartThread();
         optionStarter.start();
+
         while (readyCount < handlerQuorum) {
             try {
                 IOException exception = optionStarter.getException();
                 if (exception != null) {
                     throw exception;
                 }
-                if (in.read() == -1)
-                    throw new EOFException();
+                in.read();
             } catch (TelnetCommandException e) {
                 handleCommandException(e);
             }
         }
+        clear();
+        put(AUTO_WRAP_OFF);
+        setCursor(false);
+        move(1, 1);
+        flush();
+    }
+
+    private void initFixed() throws IOException {
+        // Send out options one by one
+        for (TelnetOptionHandler optionHandler : optionHandlers) {
+            if (optionHandler == null)
+                continue;
+
+            try {
+                optionHandler.start(out);
+            } catch (IOException e1) {
+                e1.printStackTrace();
+            }
+
+            // Timed loop
+            int time_mills = 2000;
+            int time_step = 10;
+            while (time_mills > 0) {
+                // Wait
+                try {
+                    Thread.sleep(time_step, 0);
+                    time_mills -= time_step;
+                } catch (InterruptedException e) {
+                }
+
+                try {
+                    if (in.read() == -1)
+                        break; // next option
+                } catch (TelnetCommandException e) {
+                    handleCommandException(e); // throws IOException
+                    break; // next option
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+                catch (RuntimeException e) {
+                    e.printStackTrace();
+                }
+            }
+        }
+
         clear();
         put(AUTO_WRAP_OFF);
         setCursor(false);

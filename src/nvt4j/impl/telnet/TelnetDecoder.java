@@ -102,19 +102,27 @@ public class TelnetDecoder {
                 }
                 break;
             case STATE_WILL:
-                commands.add(new OptionNegotiationCommand(pos + p, TelnetCommand.WILL, TelnetOption.getOption(c)));
+                try {
+                    commands.add(new OptionNegotiationCommand(pos + p, TelnetCommand.WILL, TelnetOption.getOption(c)));
+                } catch (RuntimeException e) { }
                 state = STATE_DATA;
                 break;
             case STATE_WONT:
-                commands.add(new OptionNegotiationCommand(pos + p, TelnetCommand.WONT, TelnetOption.getOption(c)));
+                try {
+                    commands.add(new OptionNegotiationCommand(pos + p, TelnetCommand.WONT, TelnetOption.getOption(c)));
+                } catch (RuntimeException e) { }
                 state = STATE_DATA;
                 break;
             case STATE_DO:
-                commands.add(new OptionNegotiationCommand(pos + p, TelnetCommand.DO, TelnetOption.getOption(c)));
+                try {
+                    commands.add(new OptionNegotiationCommand(pos + p, TelnetCommand.DO, TelnetOption.getOption(c)));
+                } catch (RuntimeException e) { }
                 state = STATE_DATA;
                 break;
             case STATE_DONT:
-                commands.add(new OptionNegotiationCommand(pos + p, TelnetCommand.DONT, TelnetOption.getOption(c)));
+                try {
+                    commands.add(new OptionNegotiationCommand(pos + p, TelnetCommand.DONT, TelnetOption.getOption(c)));
+                } catch (RuntimeException e) { }
                 state = STATE_DATA;
                 break;
             case STATE_SB:
@@ -136,7 +144,9 @@ public class TelnetDecoder {
                 switch (c) {
                 case TelnetCommand.SE:
                     byte[] data = sbData.toByteArray();
-                    commands.add(new OptionSubnegotiationCommand(pos + p, TelnetOption.getOption(sbOption), data));
+                    try {
+                        commands.add(new OptionSubnegotiationCommand(pos + p, TelnetOption.getOption(sbOption), data));
+                    } catch (RuntimeException e) { }
                     state = STATE_DATA;
                     break;
                 default:
